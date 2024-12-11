@@ -32,18 +32,6 @@ async getAccounts(): Promise<string[]> {
   }
 }
 
-async signAndSendTransaction(transaction: any): Promise<string> {
-  try {
-    const signedTx = await this.provider.request<string, string>({
-      method: "signAndSendTransaction",
-      params: transaction,  // 객체가 아닌 직접 transaction을 전달
-    });
-    return signedTx;
-  } catch (error) {
-    console.error("Error signing transaction:", error);
-    throw error;
-  }
-}
 
 }
 
