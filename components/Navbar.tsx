@@ -1,7 +1,9 @@
+// components/Navbar.tsx
 'use client'
+
 import { AppBar, Toolbar, Button, Box } from '@mui/material';
 import Link from 'next/link';
-import PrivyLoginButton from '@/components/PrivyLoginButton';
+import { Web3AuthButton } from '@/components/Web3AuthButton';
 
 const Navbar = () => {
   return (
@@ -30,9 +32,7 @@ const Navbar = () => {
           </Link>
         </Box>
         
-        <Box>
-          <PrivyLoginButton />
-        </Box>
+        <Web3AuthButton />
       </Toolbar>
     </AppBar>
   );

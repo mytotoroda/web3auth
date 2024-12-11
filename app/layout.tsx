@@ -1,21 +1,28 @@
+// app/layout.tsx
 'use client';
 
-import type { Metadata } from 'next';
-import Providers from '@/components/providers/Providers';
-import SolanaWalletCreator from '@/components/SolanaWalletCreator';
+import { Box } from '@mui/material';
+import { Web3AuthProvider } from '@/context/Web3AuthContext';
+import Navbar from '@/components/Navbar';
+import Bottom from '@/components/Bottom';
 
-interface RootLayoutProps {
+export default function RootLayout({
+  children,
+}: {
   children: React.ReactNode;
-}
-
-export default function RootLayout({ children }: RootLayoutProps) {
+}) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <body>
-        <Providers>
-          <SolanaWalletCreator />
-          {children}
-        </Providers>
+        <Web3AuthProvider>
+          <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+            <Navbar />
+            <Box sx={{ pt: 10, pb: 8, px: 2 }}>
+              {children}
+            </Box>
+            <Bottom />
+          </Box>
+        </Web3AuthProvider>
       </body>
     </html>
   );
