@@ -1,28 +1,30 @@
-// app/auth-callback/page.tsx
 'use client';
-
 import { useEffect } from 'react';
-import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
+import { useWeb3Auth } from '../context/Web3AuthContext'; // Web3Auth 컨텍스트 사용
 import { useRouter } from 'next/navigation';
 import { Box, CircularProgress, Typography } from '@mui/material';
 
 export default function AuthCallback() {
-  const { handleAuthorizationCallback } = useDynamicContext();
+  const { web3auth, handleCallback } = useWeb3Auth(); // Web3Auth 컨텍스트에서 필요한 항목들을 가져옵니다
   const router = useRouter();
 
   useEffect(() => {
-    const handleCallback = async () => {
+    const processCallback = async () => {
       try {
-        await handleAuthorizationCallback();
+        if (!web3auth) {
+          throw new Error('web3auth not initialized');
+        }
+        
+        await handleCallback(); // Web3Auth 콜백 처리
         router.push('/');
       } catch (error) {
-        console.error('Auth callback error:', error);
+        console.error('Web3Auth callback error:', error);
         router.push('/?error=auth_callback_failed');
       }
     };
 
-    handleCallback();
-  }, [handleAuthorizationCallback, router]);
+    processCallback();
+  }, [web3auth, handleCallback, router]);
 
   return (
     <Box
@@ -37,7 +39,7 @@ export default function AuthCallback() {
     >
       <CircularProgress />
       <Typography>
-        Completing authentication...
+        Completing Web3Auth authentication...
       </Typography>
     </Box>
   );
