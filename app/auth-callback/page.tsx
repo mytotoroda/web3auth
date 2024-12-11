@@ -1,6 +1,6 @@
 'use client';
 import { useEffect } from 'react';
-import { useWeb3Auth } from '../context/Web3AuthContext'; // Web3Auth 컨텍스트 사용
+import { useWeb3Auth } from '@/context/Web3AuthContext'; // Web3Auth 컨텍스트 사용
 import { useRouter } from 'next/navigation';
 import { Box, CircularProgress, Typography } from '@mui/material';
 
