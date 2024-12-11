@@ -1,4 +1,3 @@
-//contexts/
 'use client';
 
 import { 
@@ -10,7 +9,11 @@ import {
 } from 'react';
 import { Web3Auth } from '@web3auth/modal';
 import { CHAIN_NAMESPACES, SafeEventEmitterProvider } from '@web3auth/base';
-import { SolanaPrivateKeyProvider, SolanaWallet as BaseSolanaWallet } from '@web3auth/solana-provider';
+import { 
+  SolanaPrivateKeyProvider, 
+  SolanaWallet as BaseSolanaWallet 
+} from '@web3auth/solana-provider';
+import { Web3AuthOptions, UIConfig } from "@web3auth/modal";
 
 // BaseSolanaWallet을 확장하여 필요한 메서드 추가
 class SolanaWallet {
@@ -20,19 +23,17 @@ class SolanaWallet {
     this.provider = provider;
   }
 
-async getAccounts(): Promise<string[]> {
-  try {
-    const accounts = await this.provider.request<string[], void>({ 
-      method: "getAccounts" 
-    });
-    return accounts || [];
-  } catch (error) {
-    console.error("Error getting accounts:", error);
-    return [];
+  async getAccounts(): Promise<string[]> {
+    try {
+      const accounts = await this.provider.request<string[], void>({ 
+        method: "getAccounts" 
+      });
+      return accounts || [];
+    } catch (error) {
+      console.error("Error getting accounts:", error);
+      return [];
+    }
   }
-}
-
-
 }
 
 interface Web3AuthUser {
@@ -53,7 +54,7 @@ interface Web3AuthContextType {
 
 const Web3AuthContext = createContext<Web3AuthContextType | null>(null);
 
-const getWeb3AuthConfig = () => {
+const getWeb3AuthConfig = (): Web3AuthOptions => {
   const rpcUrl = 'https://api.devnet.solana.com';
   
   const chainConfig = {
@@ -70,21 +71,23 @@ const getWeb3AuthConfig = () => {
     config: { chainConfig }
   });
 
+  const uiConfig: UIConfig = {
+    appName: "Solana DEX",
+    appLogo: "/logo.png",
+    theme: "dark",
+    loginMethodsOrder: ["google", "facebook", "twitter"],
+    defaultLanguage: "en",
+    mode: "dark",
+    uxMode: "redirect",
+    redirectUrl: typeof window !== 'undefined' ? window.location.origin : undefined
+  };
+
   return {
     clientId: process.env.NEXT_PUBLIC_WEB3AUTH_CLIENT_ID!,
     web3AuthNetwork: 'sapphire_devnet',
     chainConfig,
     privateKeyProvider,
-    uiConfig: {
-      appName: "Solana DEX",
-      appLogo: "/logo.png",
-      theme: "dark",
-      loginMethodsOrder: ["google", "facebook", "twitter"],
-      defaultLanguage: "en",
-      mode: "dark",
-      uxMode: "redirect", // 팝업 대신 현재 창에서 처리
-      redirectUrl: typeof window !== 'undefined' ? window.location.origin : undefined // 리다이렉트 URL 설정
-    },
+    uiConfig,
   };
 };
 
@@ -102,13 +105,7 @@ export function Web3AuthProvider({ children }: { children: ReactNode }) {
         const config = getWeb3AuthConfig();
         console.log("Web3Auth Config:", JSON.stringify(config, null, 2));
 
-        const web3authInstance = new Web3Auth({
-          clientId: config.clientId,
-          web3AuthNetwork: config.web3AuthNetwork,
-          chainConfig: config.chainConfig,
-          uiConfig: config.uiConfig,
-          privateKeyProvider: config.privateKeyProvider,
-        });
+        const web3authInstance = new Web3Auth(config);
 
         await web3authInstance.initModal();
         console.log("Web3Auth initialized successfully");
