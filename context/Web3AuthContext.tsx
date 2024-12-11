@@ -20,28 +20,31 @@ class SolanaWallet {
     this.provider = provider;
   }
 
-  async getAccounts(): Promise<string[]> {
-    try {
-      const accounts = await this.provider.request<string[]>({ method: "getAccounts" });
-      return accounts || [];
-    } catch (error) {
-      console.error("Error getting accounts:", error);
-      return [];
-    }
+async getAccounts(): Promise<string[]> {
+  try {
+    const accounts = await this.provider.request<string[], void>({ 
+      method: "getAccounts" 
+    });
+    return accounts || [];
+  } catch (error) {
+    console.error("Error getting accounts:", error);
+    return [];
   }
+}
 
-  async signAndSendTransaction(transaction: any): Promise<string> {
-    try {
-      const signedTx = await this.provider.request({
-        method: "signAndSendTransaction",
-        params: { transaction },
-      });
-      return signedTx as string;
-    } catch (error) {
-      console.error("Error signing transaction:", error);
-      throw error;
-    }
+async signAndSendTransaction(transaction: any): Promise<string> {
+  try {
+    const signedTx = await this.provider.request<string, { transaction: any }>({
+      method: "signAndSendTransaction",
+      params: { transaction },
+    });
+    return signedTx;
+  } catch (error) {
+    console.error("Error signing transaction:", error);
+    throw error;
   }
+}
+
 }
 
 interface Web3AuthUser {
